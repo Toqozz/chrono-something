@@ -1,0 +1,7 @@
+(
+  axes: {
+    "vertical": Emulated(pos: Key(Comma), neg: Key(O)),
+    "horizontal": Emulated(pos: Key(E), neg: Key(A)),
+  },
+  actions: {},
+)

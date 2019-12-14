@@ -1,0 +1,12 @@
+[package]
+name = "chrono"
+version = "0.1.0"
+authors = []
+edition = "2018"
+
+[dependencies]
+ron = "0.5.1"
+
+[dependencies.amethyst]
+version = "0.13"
+features = ["vulkan"]
