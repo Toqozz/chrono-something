@@ -25,27 +25,26 @@ impl<'s> System<'s> for ClockSystem {
 
     fn run(&mut self, (mut clocks, transforms, mut debug_lines, time): Self::SystemData) {
         for (clock, transform) in (&mut clocks, &transforms).join() {
-            let clock_pos = {
+            let (mut clock_x, mut clock_y) = {
                 let idx = clock.timer * ((clock.pos_data.len()-1) as f32);
                 clock.pos_data[idx.floor() as usize]
             };
 
+            clock_x -= 25.;
+            clock_y = 34. - clock_y;
+
             // local translation.
-            let t = transform.translation();
-
             let matrix = transform.global_matrix();
-            let pos =  matrix * Vector4::new(t.x, t.y, t.z, 1.0);
-
-
+            let pos = matrix * Vector4::new(0., 0., 0., 1.0);
 
             debug_lines.draw_line(
                 [pos.x, pos.y, 0.0].into(),
-                [pos.x + clock_pos.0, pos.y + clock_pos.1, 0.0].into(),
+                [pos.x + clock_x, pos.y + clock_y, 0.0].into(),
                 Srgba::new(0., 1., 0., 1.),
             );
 
-            clock.timer += time.delta_seconds();
-            if clock.timer > 1. {
+            clock.timer += time.delta_seconds() * clock.speed;
+            while clock.timer > 1. {
                 clock.timer -= 1.;
             }
         }

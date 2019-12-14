@@ -30,9 +30,8 @@ impl Component for Player {
 }
 
 pub struct Clock {
-    // Position of the hand on the clock (0 - 1).
     pub timer: f32,
-    // Hand positions.
+    pub speed: f32,
     pub pos_data: Vec<(f32, f32)>,
 }
 impl Component for Clock {
@@ -75,7 +74,7 @@ impl WorldState {
 
         // Init player.
         let player_sprite = load_sprite_sheet(&resources.join("player.png"), world);
-        let transform = Transform::default();
+        let player_transform = Transform::default();
 
         let player_render = SpriteRender {
             sprite_sheet: player_sprite,
@@ -88,11 +87,12 @@ impl WorldState {
 
         let player = world
             .create_entity()
-            .with(transform.clone())
+            .with(player_transform)
             .with(player_render)
             .with(walk)
             .with(Player)
             .with(Transparent)
+            .with(crate::systems::draw_transforms::DebugTransform)
             .build();
 
         // Init clock.
@@ -101,10 +101,13 @@ impl WorldState {
         let clock_points = ron::de::from_str::<Vec<(f32, f32)>>(&string).expect("clock.data was malformed.");
         let clock = Clock {
             timer: 0.,
+            speed: 0.2,
             pos_data: clock_points,
         };
 
         let parent = Parent::new(player);
+        let mut clock_transform = Transform::default();
+        clock_transform.set_translation_xyz(0., 80., 0.);
 
         let clock_render = SpriteRender {
             sprite_sheet: clock_sprite,
@@ -113,7 +116,7 @@ impl WorldState {
 
         world
             .create_entity()
-            .with(transform)
+            .with(clock_transform)
             .with(parent)
             .with(clock_render)
             .with(clock)
@@ -127,7 +130,7 @@ impl WorldState {
         };
 
         let mut transform = Transform::default();
-        transform.set_translation_xyz(0., 0., 10.);
+        transform.set_translation_xyz(0., 0., 720.);
 
         let camera = Camera::standard_2d(width, height);
 

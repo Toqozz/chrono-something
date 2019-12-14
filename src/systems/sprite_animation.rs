@@ -50,6 +50,8 @@ impl<'s> System<'s> for LayeredSpriteAnimationSystem {
     fn run(&mut self, (mut sprite_renders, mut animations, time): Self::SystemData) {
         for (sprite_render, animation) in (&mut sprite_renders, &mut animations).join() {
             if !animation.playing {
+                animation.current_column = 0;
+                sprite_render.sprite_number = animation.current_column + (animation.current_row * animation.sheet_columns);
                 continue;
             }
 

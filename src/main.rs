@@ -51,7 +51,9 @@ fn main() -> amethyst::Result<()> {
         .with(systems::SimpleSpriteAnimationSystem, "sprite_animation_system", &[])
         .with(systems::LayeredSpriteAnimationSystem, "layered_sprite_animation_system", &[])
         .with(systems::SpriteMouseDirectionSystem, "sprite_mouse_direction_system", &["input_system"])
-        .with(systems::ClockSystem, "clock_system", &[]);
+        .with(systems::ClockSystem, "clock_system", &[])
+        .with(systems::CheatSystem, "cheat_system", &[])
+        .with(systems::DrawTransformsSystem, "draw_transforms_system", &[]);
 
     let mut game = Application::new("./", WorldState, game_data)?;
     game.run();

@@ -6,7 +6,6 @@ use amethyst::core::timing::Time;
 use amethyst::ecs::{Join, Read, Write, ReadStorage, System, SystemData, World, WriteStorage};
 use amethyst::input::{InputHandler, StringBindings};
 use amethyst::renderer::palette::Srgba;
-use amethyst::renderer::debug_drawing::DebugLines;
 
 use crate::states::world::Player;
 use crate::tilemap::TileMap;
@@ -23,23 +22,10 @@ impl<'s> System<'s> for PlayerMovementSystem {
         Read<'s, InputHandler<StringBindings>>,
         Read<'s, Time>,
         Read<'s, TileMap>,
-        Write<'s, DebugLines>,
     );
 
-    fn run(&mut self, (mut transforms, mut animations, players, input, time, tilemap, mut debug_lines): Self::SystemData) {
+    fn run(&mut self, (mut transforms, mut animations, players, input, time, tilemap): Self::SystemData) {
         for (transform, animation, _) in (&mut transforms, &mut animations, &players).join() {
-            debug_lines.draw_line(
-                [transform.translation().x - 5., transform.translation().y, 0.0].into(),
-                [transform.translation().x + 5., transform.translation().y, 0.0].into(),
-                Srgba::new(0., 1., 0., 1.),
-            );
-
-            debug_lines.draw_line(
-                [transform.translation().x, transform.translation().y - 5., 0.0].into(),
-                [transform.translation().x, transform.translation().y + 5., 0.0].into(),
-                Srgba::new(0., 1., 0., 1.),
-            );
-
             let input = Vector2::new(input.axis_value("horizontal").unwrap(), input.axis_value("vertical").unwrap());
             if input.magnitude() <= 0. {
                 animation.playing = false;
@@ -73,8 +59,7 @@ impl<'s> System<'s> for PlayerMovementSystem {
             let move_amount = 100. * time.delta_seconds();
 
             let new_pos = tilemap.fix_movement(transform.translation().xy(), move_dir.xy(), move_amount);
-            transform.set_translation(Vector3::new(new_pos.x, new_pos.y, 0.));
-            //transform.prepend_translation(Vector3::new(movement.x, movement.y, 0.));
+            transform.set_translation(Vector3::new(new_pos.x, new_pos.y, -new_pos.y));
         }
     }
 }

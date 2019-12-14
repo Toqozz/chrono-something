@@ -58,7 +58,7 @@ impl TileMap {
 
     fn place_sprite(&self, world: &mut World, pos: Vector2<f32>, sprite_idx: usize, handle: Handle<SpriteSheet>) {
         let mut t = Transform::default();
-        t.set_translation_xyz(pos.x, pos.y, 0.);
+        t.set_translation_xyz(pos.x, pos.y, -pos.y);
 
         let render = SpriteRender {
             sprite_sheet: handle,
